@@ -288,6 +288,9 @@ func mongodbContainer(version string, volumeMounts []corev1.VolumeMount) contain
 # mongod does not write to stdout and a log file
 tail -F /var/log/mongodb-mms-automation/mongodb.log > /dev/stdout &
 
+# Fix IPv6 only issue 
+sed -i "s/'::'/'0.0.0.0,::'/g" /data/automation-mongod.conf;
+
 # start mongod with this configuration
 exec mongod -f %s;
 
