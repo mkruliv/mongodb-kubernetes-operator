@@ -57,6 +57,8 @@ export NSS_WRAPPER_PASSWD=/tmp/passwd
 export LD_PRELOAD=libnss_wrapper.so
 export NSS_WRAPPER_GROUP=/etc/group
 fi
+cp /var/lib/automation/config/cluster-config.json /data/cluster-config.json
+sysctl -a 2>/dev/null | grep net.ipv6.conf.all.disable_ipv6 | grep 0 || sed -i 's/"net.ipv6":true,//g' /data/cluster-config.json && sed -i 's/"net.bindIpAll":true,//g' /data/cluster-config.json
 `
 )
 
@@ -173,7 +175,7 @@ func BuildMongoDBReplicaSetStatefulSetModificationFunction(mdb MongoDBStatefulSe
 }
 
 func BaseAgentCommand() string {
-	return "agent/mongodb-agent -cluster=" + clusterFilePath + " -healthCheckFilePath=" + agentHealthStatusFilePathValue + " -serveStatusPort=5000"
+	return "agent/mongodb-agent -cluster=/data/cluster-config.json -healthCheckFilePath=" + agentHealthStatusFilePathValue + " -serveStatusPort=5000"
 }
 
 func AutomationAgentCommand() []string {
